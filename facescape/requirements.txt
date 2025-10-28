@@ -1,0 +1,15 @@
+# python requirements
+cmake
+numpy
+dlib
+opencv-python
+Pillow
+scipy
+trimesh
+pyrender
+openmesh
+scikit-learn
+tqdm
+ipython
+pyyaml
+open3d
