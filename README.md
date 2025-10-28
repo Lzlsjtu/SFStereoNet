@@ -36,7 +36,7 @@
 
 ### 🌍 FoundationStereo（CVPR 2025）: 通用零样本立体匹配框架
 
-[FoundationStereo](https://github.com/NVlabs/FoundationStereo) 是 NVIDIA 提出的立体匹配基础模型，具备 **强大的零样本泛化能力**。它在 Middlebury 与 ETH3D 排行榜上取得了全球第一的成绩。核心特征如下：
+[FoundationStereo](https://github.com/NVlabs/FoundationStereo) 是 NVIDIA 提出的立体匹配基础模型，具备 **强大的零样本泛化能力**。它刚发布时在 Middlebury 与 ETH3D 排行榜上取得了全球第一的成绩。核心特征如下：
 
 - 🧠 **基础模型架构**：基于侧调谐（side-tuning）特征主干，将视觉基础模型的单目先验迁移至立体估计；
 - 🌀 **百万级合成训练数据**：利用自动自净流程构建高质量的 100 万对立体图像数据；
@@ -61,8 +61,7 @@
 2. **语义分割（SegFace）**：提取面部区域掩膜；
 3. **视差估计（FoundationStereo）**：生成密集视差图；
 4. **深度恢复与点云融合**：根据相机参数计算真实尺度深度；
-5. **点云配准与曲面重建**：生成统一三维面部模型；
-6. **误差评估**：与 FaceScape 真值网格进行配准后精度验证。
+6. **误差评估**：与 FaceScape 真值网格使用cloudcompare进行配准后精度验证。
 
 ---
 
