@@ -23,7 +23,7 @@
 
 ### 🎯 SegFace（AAAI 2025）: 面向长尾类别的人脸语义分割
 
-[SegFace](https://huggingface.co/kartiknarayan/SegFace) 是首个针对人脸语义分割中**长尾类别（如耳环、帽子、眼镜等）**的高性能方法。其主要特点包括：
+[SegFace](https://huggingface.co/kartiknarayan/SegFace) 是首个针对人脸语义分割中**长尾类别（如耳环、帽子、眼镜等**的高性能方法。其主要特点包括：
 
 - 🧩 **类特定可学习 token**：每个类别拥有独立的 transformer token，提升了稀有类的表现；
 - ⚙️ **轻量化结构**：可在移动端以 >95 FPS 运行；
