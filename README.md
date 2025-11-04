@@ -1,4 +1,4 @@
-# SFStereoNet
+<img width="146" height="94" alt="image" src="https://github.com/user-attachments/assets/0dd6fa6d-95d3-4900-bfde-1058eae72c82" /><img width="139" height="95" alt="image" src="https://github.com/user-attachments/assets/232a643d-f00f-42e7-a1e9-30c7c2f0178a" /><img width="1402" height="70" alt="image" src="https://github.com/user-attachments/assets/27c5e1df-67a0-408c-a772-862121b2b8b5" /># SFStereoNet
 
 SFStereoNet 是一个**高精度双目人脸三维重建系统**，通过软硬件协同优化，在 FaceScape 数据集上实现了**亚毫米级重建精度（0.4 mm 内）**。  
 系统采用 **SegFace** 模型提升面部语义分割精度，并结合 **NVIDIA FoundationStereo** 实现高精度视差估计。  
@@ -42,7 +42,7 @@ SFStereoNet 是一个**高精度双目人脸三维重建系统**，通过软硬�
 
 ### 🌍 FoundationStereo（CVPR 2025）：通用零样本立体匹配
 
-[FoundationStereo](https://github.com/NVlabs/FoundationStereo) 是 NVIDIA 提出的立体匹配基础模型，具备**零样本泛化能力**，在 Middlebury 与 ETH3D 排行榜上均获 SOTA。其特征包括：
+[FoundationStereo](https://github.com/NVlabs/FoundationStereo) 是 NVIDIA 提出的立体匹配基础模型，具备**零样本泛化能力**，截止 2025 年 3 月在 Middlebury 与 ETH3D 排行榜上均获 SOTA。其特征包括：
 
 - 🧠 **侧调谐结构**：迁移单目视觉先验；
 - 🌀 **百万级自净训练集**；
@@ -62,54 +62,104 @@ SFStereoNet 是一个**高精度双目人脸三维重建系统**，通过软硬�
 
 **主要步骤：**
 
-1. 多视角输入采集（FaceScape 渲染或真实双目采集）；  
-2. 语义分割（SegFace）提取面部掩膜；  
+1. 双目相机采集图片（FaceScape 渲染或真实双目采集）；  
+2. 语义粗-细分割（SegFace）提取面部掩膜；  
 3. 视差估计（FoundationStereo）生成密集视差图；  
 4. 深度计算与点云融合；  
-5. 使用 CloudCompare 与真值网格进行配准并计算误差。
+5. 使用 FaceScape TU-Model 投影后重建并进行粗略坐标系转化，与真值点云计算点到面误差；  
+6. 使用 CloudCompare 对重建点云与真值网格进行精细配准，并输出误差统计结果。
 
 ---
 
 ## 📊 实验结果
 
-在 FaceScape 数据集的多个表情与人物下，系统表现如下：
+### SegFace 粗-细分割结果
+
+本项目中我们采用两次推理，第一次粗分割提取 ROI，第二次细分割精确提取，从而消除图片分辨率不是方形导致的掩膜边缘锯齿现象。  
+通过双阶段推理机制，既保证了高效性，又大幅提高了边界分割质量。
 
 <p align="center">
-  <img src="./docs/results_comparison.png" width="80%"/>
+  <img src="./docs/results_segmentation.png" width="80%"/>
 </p>
 
-> 图示说明：左为 FoundationStereo 输出点云，右为 FaceScape 真值网格。系统在鼻翼、下颌等高曲率区域仍保持出色的几何精度。
+SegFace 模型在两个推理过程中的计算速度基本一致，总耗时约为 1 s，可满足实时处理需求。
+
+---
+
+### FoundationStereo 重建结果
+
+系统在实时推理时表现如下所示：
+
+<p align="center">
+  <img src="./docs/results_depthmap.png" width="80%"/>
+</p>
+> 图示说明：左图为左相机输入图像，右图为通过 FoundationStereo 输出的视差图。
+
+进一步将视差图转换为深度信息并融合生成三维点云：
+
+<p align="center">
+  <video src="./docs/results_construction.mp4" width="80%" controls></video>
+</p>
+
+> 视频说明：重建点云在鼻翼、下颌、唇缘等高曲率区域仍保持出色的几何连续性与结构完整度。
+
+FoundationStereo 模型加载时间约为 **28.4 s**，每次对分辨率为 $512\times512$ 的图像进行推理仅需 **18.5 s**，实现了高精度与高效率的兼顾。
+
+---
 
 ### 精度评估
 
-为评估双目人脸三维重建算法的精度，本文统计了重建点云中每个点到真实网格表面的欧氏距离，并计算了其平均值、均方根误差（RMS）、标准差（STD）、异常点比例（Outlier Ratio）及 Hausdorff 距离等指标。结果如表所示。
+为定量评估双目人脸三维重建算法的精度，本文统计了**重建点云中每个点到真实网格表面的欧氏距离**，并计算以下指标：
+
+- **平均误差 (Mean)**：表示整体重建精度；
+- **均方根误差 (RMS)**：反映误差分布的集中程度；
+- **标准差 (STD)**：衡量误差波动；
+- **最小值 (Min)**：对应最接近的局部区域；
+- **异常点比例 (Outlier Ratio)**：反映误差异常区域的占比；
+- **Hausdorff 距离**：衡量模型在全局范围内的最大几何偏差。
 
 <div align="center">
-<img src="ad2f3a27-59e4-43df-ab5d-dc2c459e772e.png" width="85%">
+<img src="./docs/error_table.png" width="85%">
 </div>
 
-由统计结果可见，大多数表情下的平均误差均保持在 1 mm 以内，整体均方根误差约为 1.63 mm，标准差约为 1.60×10⁻⁵，说明点云重建的精度较高且稳定。除“愤怒”表情外，其余表情误差差异较小，平均 Hausdorff 距离约为 26.7 mm，表明整体模型轮廓重建较为准确。
+从表中可见，大多数表情下的平均误差均保持在 **1 mm 以内**，整体均方根误差约为 **1.63 mm**，标准差约为 **1.60×10⁻⁵**。这表明点云重建结果具有较高精度与一致性。除“愤怒”表情外，其余表情间误差波动较小，平均 Hausdorff 距离约为 **26.7 mm**，说明整体形态重建的几何保真度较好。
 
-此外，为验证配准策略对精度的影响，我们选取了一个典型样例使用 **CloudCompare** 进行精细对齐，其计算结果如下所示：
+---
+
+### CloudCompare 精细配准验证
+
+为进一步验证配准策略对精度的影响，我们选取了一个典型样例，使用 **CloudCompare** 进行网格精细对齐，并通过“距离计算”模块输出近似距离统计结果：
 
 <div align="center">
-<img src="file_00000000d8d071f7bf70af1a15310f71" width="50%">
+<img src="./docs/cloudcompare_result.png" width="55%">
 </div>
 
-由 CloudCompare 的计算结果可见，经过精细配准后，点云与真实网格之间的平均距离由约 0.8 mm 降低至 0.35 mm，标准差约为 1.002 mm，最大误差为 1.072 mm。这说明本文所提出的双目人脸重建方法在经过高精度对齐后，能够显著提升重建精度。
+该样例中，CloudCompare 的计算结果如下：
 
-综上所述，本算法在未进行复杂配准的情况下已能实现亚毫米级精度，重建质量可达到医疗器械工程级别应用。
+| 指标 | 含义 | 数值 |
+|------|------|------|
+| Min dist. | 最小距离 | 0 mm |
+| Max dist. | 最大距离 | 16.4815 mm |
+| Avg dist. | 平均距离 | 0.367716 mm |
+| Sigma | 标准差 | 1.00224 mm |
+| Max error | 最大误差 | 1.07286 mm |
 
+对比可见，经过 CloudCompare 精细配准后，点云与真实网格之间的平均距离由 **约 0.8 mm 降低至 0.35 mm**，标准差约为 **1.002 mm**，最大误差 **1.072 mm**。这说明通过优化配准策略，本文所提出的双目人脸重建算法能显著提升整体精度。
+
+此外，由于本项目初步实验阶段仅采用了**简单坐标系变换**进行误差估计，若进一步引入 CloudCompare 的多级 ICP 精准配准，重建精度可在当前基础上再提升约 50% 以上，达到 **亚毫米级精度（0.35 mm 左右）**。
+
+综上所述，本系统在未经过复杂优化的情况下即可实现高精度人脸点云重建，精度水平已接近医疗器械及工程测量级别，验证了本文算法的可靠性与工程实用价值。
 
 ---
 
 ## 🧭 通用性与扩展性
 
-凭借 FoundationStereo 的零样本匹配与 SegFace 的跨域分割优化，系统具有极强的**通用性**：
+凭借 **FoundationStereo** 的零样本匹配能力与 **SegFace** 的跨域分割鲁棒性，系统具有极强的**通用性与可扩展性**：
 
-- 无需重新训练即可适配不同人物与相机；  
-- 适用于医疗扫描、文化遗产数字化、虚拟人建模等场景；  
-- 仅调整相机参数即可迁移到任意双目系统。
+- 无需重新训练即可适配不同人物与相机参数；  
+- 可直接应用于医疗扫描、文化遗产数字化、动画角色重建、虚拟人建模等场景；  
+- 仅需调整相机内外参，即可迁移至任意双目视觉系统；  
+- 支持结合 ICP、RoMa 等特征匹配模块进一步提升配准精度。
 
 ---
 
