@@ -95,12 +95,9 @@ SegFace 模型在两个推理过程中的计算速度基本一致，总耗时约
 </p>
 > 图示说明：左图为左相机输入图像，右图为通过 FoundationStereo 输出的视差图。
 
-进一步将视差图转换为深度信息并融合生成三维点云：
 
-<p align="center">
-  <video src="./docs/results_construction.mp4" width="80%" controls></video>
-</p>
-
+进一步将视差图转换为深度信息并融合生成三维点云，由于视频较大，我们提供demo实例可视化后的下载链接
+[Download full video](./docs/results_construction.mp4)
 > 视频说明：重建点云在鼻翼、下颌、唇缘等高曲率区域仍保持出色的几何连续性与结构完整度。
 
 FoundationStereo 模型加载时间约为 **28.4 s**，每次对分辨率为 $512\times512$ 的图像进行推理仅需 **18.5 s**，实现了高精度与高效率的兼顾。
