@@ -29,7 +29,7 @@ SFStereoNet 是一个**高精度双目人脸三维重建系统**，通过软硬�
 
 ### 🎯 SegFace（AAAI 2025）：长尾类别人脸语义分割
 
-[SegFace](https://huggingface.co/kartiknarayan/SegFace) 是首个专注于人脸分割中**长尾类别**（耳环、眼镜、帽子等）的模型，主要特征包括：
+[SegFace](https://huggingface.co/kartiknarayan/SegFace) 是首个专注于人脸分割中**长尾类别**（耳朵，眉毛，鼻翼，耳环，眼镜，帽子等）的模型，主要特征包括：
 
 - 🧩 **类特定可学习 token**：针对稀有类独立建模；
 - ⚙️ **轻量化结构**：移动端 >95 FPS；
@@ -50,7 +50,7 @@ SFStereoNet 是一个**高精度双目人脸三维重建系统**，通过软硬�
 - 🧩 **跨场景稳健视差估计**；
 - 🚀 **ONNX / TensorRT 加速推理**。
 
-> FoundationStereo 为系统的**核心深度重建模块**，确保跨设备与多场景的稳定性能，实现**领域无关**与**可迁移**的人脸立体重建。
+> FoundationStereo 为系统的**核心深度重建模块**，确保跨设备与多场景的稳定性能，实现**域泛化**与**可迁移**的人脸立体重建。
 
 ---
 
