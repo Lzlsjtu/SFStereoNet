@@ -1,4 +1,4 @@
-<img width="146" height="94" alt="image" src="https://github.com/user-attachments/assets/0dd6fa6d-95d3-4900-bfde-1058eae72c82" /><img width="139" height="95" alt="image" src="https://github.com/user-attachments/assets/232a643d-f00f-42e7-a1e9-30c7c2f0178a" /><img width="1402" height="70" alt="image" src="https://github.com/user-attachments/assets/27c5e1df-67a0-408c-a772-862121b2b8b5" /># SFStereoNet
+# SFStereoNet
 
 SFStereoNet 是一个**高精度双目人脸三维重建系统**，通过软硬件协同优化，在 FaceScape 数据集上实现了**亚毫米级重建精度（0.4 mm 内）**。  
 系统采用 **SegFace** 模型提升面部语义分割精度，并结合 **NVIDIA FoundationStereo** 实现高精度视差估计。  
